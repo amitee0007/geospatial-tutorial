@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link
+      href="https://api.mapbox.com/mapbox-gl-js/v2.7.0/mapbox-gl.css"
+      rel="stylesheet"
+    />
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.7.0/mapbox-gl.js"></script>
+    <script src="https://unpkg.com/deck.gl@^8.0.0/dist.min.js"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.26.0/axios.min.js"
+      integrity="sha512-bPh3uwgU5qEMipS/VOmRqynnMXGGSRv+72H/N260MQeXZIK4PG48401Bsby9Nq5P5fz7hy5UGNmC/W1Z51h2GQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+  </head>
+  <body>
+    <div id="map" style="width: 100%; height: 100vh"></div>
+    <button
+    onclick="display2dBuilding()"
+    style="
+      position: fixed;
+      top: 20px;
+      right: 10px;
+      z-index: 10000;
+      font-size: 30px;
+    "
+  >
+    2D View
+  </button>
+    <button
+    onclick="display3dBuilding()"
+    style="
+      position: fixed;
+      top: 70px;
+      right: 10px;
+      z-index: 10000;
+      font-size: 30px;
+    "
+  >
+    3D View
+  </button>
+
+    <script>
+      mapboxgl.accessToken =
+        "pk.eyJ1IjoicmFqYW4wMjciLCJhIjoiY2s2b25oYTg1MDJtazNsbXZ4OTFqcnN2cSJ9.MGaLTVPvgOjQazj7ZTX1nQ";
+      const map = new mapboxgl.Map({
+        container: "map",
+        style: "mapbox://styles/mapbox/satellite-streets-v11",
+        zoom: 15,
+        center: [-75.6703753, 4.532016],
+        maxZoom: 21,
+        pitch: 70,
+        antialias: !0,
+      });
+
+      map.on("load", () => {
+        axios.get("map.geojson").then(res=>{
+          const t = new deck.MapboxLayer({
+          id: "building",
+          type: deck.GeoJsonLayer,
+          data: res.data,
+          opacity: 0.8,
+          stroked: false,
+          filled: true,
+          wireframe: true,
+          getElevation: (e) => 100,
+          getFillColor: [65, 182, 196],
+          getLineColor: [9, 9, 9],
+          sizeUnits: "meters",
+        });
+
+        map.addLayer(t);
+        })
+      });
+
+      let display3dBuilding = ()=>{
+        if(map.getLayer('building'))
+          map.getLayer('building').implementation.setProps({extruded: true})
+      }
+
+      let display2dBuilding = ()=>{
+        if(map.getLayer('building'))
+          map.getLayer('building').implementation.setProps({extruded: false})
+      }
+
+    </script>
+  </body>
+</html>
