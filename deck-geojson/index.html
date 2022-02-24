@@ -37,6 +37,9 @@
     3D View
   </button>
     <script>
+
+      let { MapboxLayer, GeoJsonLayer} = deck;
+
       mapboxgl.accessToken = "pk.eyJ1IjoiYW1pdGVlMDAwNyIsImEiOiJja3psM2R0ZjIxMWxrMm5sbGRudmN0emg3In0.5gZOlrQvnEdpuByBTINgDw";
       const map = new mapboxgl.Map({
         container: "map",
@@ -50,9 +53,9 @@
 
       map.on("load", () => {
         axios.get("map.geojson").then(res=>{
-          const t = new deck.MapboxLayer({
+          const t = new MapboxLayer({
           id: "building",
-          type: deck.GeoJsonLayer,
+          type: GeoJsonLayer,
           data: res.data,
           opacity: 0.8,
           stroked: false,
