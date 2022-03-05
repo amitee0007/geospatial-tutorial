@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="con"></div>
+    <script>
+        let a = {
+    "columns_name": [
+        "Layer",
+        "PaperSpace",
+        "SubClasses",
+        "Linetype",
+        "EntityHand",
+        "Text",
+        "geometry"
+    ],
+    "total_counts": {
+        "Layer": 7,
+        "PaperSpace": 0,
+        "SubClasses": 0,
+        "Linetype": 0,
+        "EntityHand": 0,
+        "Text": 0,
+        "geometry": 7
+    },
+    "null_value_per_column": {
+        "Layer": 0,
+        "PaperSpace": 7,
+        "SubClasses": 7,
+        "Linetype": 7,
+        "EntityHand": 0 
+    }
+}
+
+    let columns = a.columns_name;
+    let total_counts = a.total_counts;
+    let null_value_per_column = a.null_value_per_column;
+
+    console.log(columns)
+    console.log(Object.values(total_counts));
+    console.log(Object.values(null_value_per_column));
+
+    let body =  document.getElementById("con")
+
+    columns.map((c,i)=>{
+
+        let div = document.createElement('div');
+        div.style.display = "flex";
+        body.appendChild(div) 
+        let div1 = document.createElement('div');
+        div1.style.width = "100px"
+        // div1.style.height = "100px"
+        console.log(c,i)
+        div1.innerHTML = c
+        let div2 = document.createElement('div');
+        div2.style.width = "100px"
+        div2.innerHTML = Object.values(total_counts)[i]
+
+        let div3 = document.createElement('div');
+        div3.style.width = "100px"
+        div3.innerText = Object.values(null_value_per_column)[i]
+
+
+        div.appendChild(div1)
+        div.appendChild(div2)
+        div.appendChild(div3)
+
+
+
+
+       
+    })
+
+
+
+    </script>
+</body>
+</html>
