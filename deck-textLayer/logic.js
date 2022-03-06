@@ -25,47 +25,30 @@ const map = new mapboxgl.Map({
 });
 
 map.on("load", () => {
-  axios.get("../threejs-icon/map.geojson").then(res=>{
-    const t = new MapboxLayer({
-    id: "building",
-    type: GeoJsonLayer,
-    data: res.data,
-    opacity: 0.95,
-    stroked: true,
-    getPointRadius: 5,
-    filled: true,
-    wireframe: true,
-    getElevation: (e) => 100,
-    getFillColor: [110, 182, 196],
-    getLineColor: [9, 9, 9],
-    // sizeUnits: "meters",
-  });
+  axios.get("map.geojson").then(res=>{
 
-  map.addLayer(t);
-
-  let d = res.data.features;
-  d.map((f,k)=>{
+  let features = res.data.features;
+  features.map((f,k)=>{
       if(aminaties[k])
       f.properties.type = aminaties[k]
   })
 
-  layericon = new MapboxLayer({
-    id: 'icon-layer',
-    type: IconLayer,
-    data: res.data.features,
-    getIcon: d => ({
-        url: d.properties.type+'.png',
-        width: 128,
-        height: 128,
-        anchorY: 128
-      }),
-    sizeMinPixels: 20,
-    sizeMaxPixels: 70,
-    sizeScale: 15,
+  const layer = new MapboxLayer({
+    id: 'text-layer',
+    type : TextLayer,
+    data: features,
+    pickable: true,
     getPosition: d => [...d.geometry.coordinates,1],
-    getSize: d => 5,
-    // getColor: d => [Math.sqrt(d.exits), 140, 0]
+    getText: d => d.properties.type,
+    getColor: [255,255,255,255],
+    getSize: 40,
+    getAngle: 0,
+    getTextAnchor: 'middle',
+    getAlignmentBaseline: 'center'
   });
+
+  map.addLayer(layer)
+
 
   })
 });

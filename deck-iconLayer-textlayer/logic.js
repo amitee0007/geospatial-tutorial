@@ -25,7 +25,7 @@ const map = new mapboxgl.Map({
 });
 
 map.on("load", () => {
-  axios.get("../threejs-icon/map.geojson").then(res=>{
+  axios.get("map.geojson").then(res=>{
     const t = new MapboxLayer({
     id: "building",
     type: GeoJsonLayer,
@@ -49,6 +49,22 @@ map.on("load", () => {
       f.properties.type = aminaties[k]
   })
 
+  const layer = new MapboxLayer({
+    id: 'text-layer',
+    type : TextLayer,
+    data: res.data.features,
+    pickable: true,
+    getPosition: d => [...d.geometry.coordinates,25],
+    getText: d => d.properties.type,
+    getColor: [255,255,255,2555],
+    getSize: 30,
+    getAngle: 0,
+    getTextAnchor: 'middle',
+    getAlignmentBaseline: 'center'
+  });
+
+  map.addLayer(layer)
+
   layericon = new MapboxLayer({
     id: 'icon-layer',
     type: IconLayer,
@@ -60,11 +76,11 @@ map.on("load", () => {
         anchorY: 128
       }),
     sizeMinPixels: 20,
-    sizeMaxPixels: 70,
+    sizeMaxPixels: 90,
     sizeScale: 15,
     getPosition: d => [...d.geometry.coordinates,1],
     getSize: d => 5,
-    // getColor: d => [Math.sqrt(d.exits), 140, 0]
+    getColor: d => [Math.sqrt(d.exits), 140, 0]
   });
 
   })

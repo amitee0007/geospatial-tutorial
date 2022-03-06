@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.7.0/mapbox-gl.css" rel="stylesheet" />
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.7.0/mapbox-gl.js"></script>
+    <script src="https://unpkg.com/deck.gl@^8.0.0/dist.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  </head>
+  <body>
+    <div id="map" style="width: 100%; height: 100vh"></div>
+    <button
+    onclick="display2dBuilding()"
+    style="
+      position: fixed;
+      top: 20px;
+      right: 10px;
+      z-index: 10000;
+      font-size: 30px;
+    "
+  >
+    2D icon
+  </button>
+    <button
+    onclick="display3dBuilding()"
+    style="
+      position: fixed;
+      top: 70px;
+      right: 10px;
+      z-index: 10000;
+      font-size: 30px;
+    "
+  >
+    3D icon
+  </button>
+    <script src="./logic.js"></script>
+  </body>
+</html>
