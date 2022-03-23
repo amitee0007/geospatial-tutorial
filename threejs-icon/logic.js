@@ -101,6 +101,8 @@ var threejsLayer = {
     const loader = new THREE.SVGLoader();
 
     for (let i = 0; i < aminaties.length; i++) {
+      let position = convert(linesCollection.features[i].geometry.coordinates);
+
       // load a SVG resource
       loader.load(
         // resource URL
@@ -111,7 +113,7 @@ var threejsLayer = {
 
           const paths = data.paths;
           const group = new THREE.Group();
-          let position = convert(linesCollection.features[i].geometry.coordinates);
+          // let position = convert(linesCollection.features[i].geometry.coordinates);
 
         //   const ratio = remapFloat(100, 6, 60, 2.8, 8.0);
         //   const ds = ratio;
@@ -159,7 +161,16 @@ var threejsLayer = {
 
             for (let j = 0; j < shapes.length; j++) {
               const shape = shapes[j];
-              const geometry = new THREE.ShapeGeometry(shape);
+              const extrudeSettings = {
+                steps: 2,
+                depth: 30,
+                bevelEnabled: true,
+                bevelThickness: 1,
+                bevelSize: 1,
+                bevelOffset: 0,
+                bevelSegments: 1
+              };
+              const geometry = new THREE.ExtrudeGeometry(shape,extrudeSettings);
               const mesh = new THREE.Mesh(geometry, material);
               mesh.scale.set(0.5,0.5,0.5)
 
@@ -179,7 +190,30 @@ var threejsLayer = {
           console.log(error);
         }
       );
+
+      const loaders = new THREE.FontLoader();
+
+      loaders.load( '../three.js-master/examples/fonts/helvetiker_regular.typeface.json', function ( font ) {
+
+      let geometry = new THREE.TextGeometry(aminaties[i],{
+        font: font,
+        size: 5,
+        height: 1,
+        curveSegments: 12,
+        bevelEnabled: true,
+        bevelThickness: 0.1,
+        bevelSize: 0.1,
+        bevelOffset: 0,
+        bevelSegments: 0
+      })
+      let material = new THREE.LineBasicMaterial({color : 0xff0000})
+      let text = new THREE.Mesh(geometry,material)
+      text.position.set(position.x,position.y+40,position.z);
+      scene.add(text)
+    })
+
     }
+
 
     // this.scene.add(lineGroup);
     scene = this.scene;
@@ -227,7 +261,7 @@ var threejsLayer = {
 
     this.camera.projectionMatrix.elements = matrix_;
     this.camera.projectionMatrix = m.multiply(l);
-    renderHUD(this.camera);
+    // renderHUD(this.camera);
     this.renderer.state.reset();
     this.renderer.render(this.scene, this.camera);
     this.map.triggerRepaint();

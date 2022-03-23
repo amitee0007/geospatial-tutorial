@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Disc Club</title>
+    <style>
+      body {
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <script src="../three.js-master/build/three.min.js"></script>
+    <script src="../three.js-master/examples/js/controls/OrbitControls.js"></script>
+    <script src="../three.js-master/examples/js/objects/Lensflare.js"></script>
+    <script src="../three.js-master/examples/js/libs/fflate.min.js"></script>
+    <script src="../three.js-master/examples/js/loaders/FBXLoader.js"></script>
+    <script>
+      const scene = new THREE.Scene();
+      
+			const clock = new THREE.Clock();
+
+      let mixer;
+      const camera = new THREE.PerspectiveCamera(
+        75,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        1000
+      );
+      camera.position.set(20, 60, 40);
+
+      const renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.body.appendChild(renderer.domElement);
+
+      const controls = new THREE.OrbitControls(camera, renderer.domElement);
+      const spotLight = new THREE.SpotLight(0xffffff);
+      spotLight.position.set(10, 70, 10);
+      scene.add(spotLight);
+
+      const geometry = new THREE.BoxGeometry(100, 100, 5);
+      const material = new THREE.MeshStandardMaterial({
+        color: 0xaaaaaa,
+        roughness: 0.1,
+      });
+      const floor = new THREE.Mesh(geometry, material);
+      floor.rotation.set(Math.PI / 2, 0, 0);
+      scene.add(floor);
+
+      const lightPoint = new THREE.PointLight( 0xffffff, 1.5, 2000 );
+
+const textureLoader = new THREE.TextureLoader();
+
+const textureFlare0 = textureLoader.load( "../three.js-master/examples/textures/lensflare/lensflare0.png" );
+const textureFlare1 = textureLoader.load( "../three.js-master/examples/textures/lensflare/lensflare2.png" );
+const textureFlare2 = textureLoader.load( "../three.js-master/examples/textures/lensflare/lensflare3.png" );
+
+const lensflare = new THREE.Lensflare();
+
+lensflare.addElement( new THREE.LensflareElement( textureFlare0, 512, 0 ) );
+lensflare.addElement( new THREE.LensflareElement( textureFlare1, 512, 0 ) );
+lensflare.addElement( new THREE.LensflareElement( textureFlare2, 60, 0.6 ) );
+
+lightPoint.add( lensflare );
+scene.add(lightPoint);
+
+      let dicLight = (x,y,z,rotation) => {
+        console.log(rotation)
+        const width = 10;
+        const height = 10;
+        const intensity = 4;
+        const color = new THREE.Color("#"+Math.floor(Math.random()*99)+Math.floor(Math.random()*99)+Math.floor(Math.random()*99))
+        const rectLight = new THREE.RectAreaLight(
+          color,
+          intensity,
+          width,
+          height
+        );
+
+        if(rotation) rectLight.rotation.set(0, 0 ,-rotation)
+        rectLight.position.set(x,y,z);
+        scene.add(rectLight);
+
+        const souceGeometry = new THREE.BoxGeometry(10, 10, 2);
+        const sourcematerial = new THREE.MeshBasicMaterial({
+          color: color,
+        });
+        const source = new THREE.Mesh(souceGeometry, sourcematerial);
+        source.rotation.set(0, Math.PI / 2, 0);
+        source.position.copy(rectLight.position);
+        if(rotation) source.rotation.set(0,0 ,-rotation)
+
+        scene.add(source);
+      };
+
+      for(let i = 0 ; i < 8; i++){
+        dicLight(50,10,45 - i*12.5)
+      }
+
+      for(let i = 0 ; i < 7; i++){
+        dicLight(50,22.5,45 - i*12.5)
+      }
+
+      for(let i = 0 ; i < 6; i++){
+        dicLight(50,35,45 - i*12.5)
+      }
+
+      for(let i = 0 ; i < 5; i++){
+        dicLight(50,47.5,45 - i*12.5)
+      }
+
+      for(let i = 0 ; i < 7; i++){
+        dicLight(38.5 - i*12.5,10,52.5, Math.PI*0.5)
+      }
+
+      for(let i = 0 ; i < 6; i++){
+        dicLight(38.5 - i*12.5,22.5,52.5, Math.PI*0.5)
+      }
+
+      for(let i = 0 ; i < 5; i++){
+        dicLight(38.5 - i*12.5,35,52.5, Math.PI*0.5)
+      }
+
+      for(let i = 0 ; i < 4; i++){
+        dicLight(38.5 - i*12.5,47.5,52.5, Math.PI*0.5)
+      }
+
+      const loader = new THREE.FBXLoader();
+				loader.load( './Thriller Part 2.fbx', function ( object ) {
+
+					mixer = new THREE.AnimationMixer( object );
+
+					const action = mixer.clipAction( object.animations[ 0 ] );
+					action.play();
+
+					object.traverse( function ( child ) {
+
+						if ( child.isMesh ) {
+
+							child.castShadow = true;
+							child.receiveShadow = true;
+
+						}
+
+					} );
+
+          object.scale.set(0.12,0.12,0.12);
+          object.rotation.set(0,Math.PI/2,0)
+
+					scene.add( object );
+
+				} );
+
+
+      function animate() {
+        requestAnimationFrame(animate);
+        controls.update();
+        lightPoint.position.set(50-Math.random()*100,1,50-Math.random()*100)
+				const delta = clock.getDelta();
+				if ( mixer ) mixer.update( delta );
+        renderer.render(scene, camera);
+      }
+
+      animate();
+    </script>
+  </body>
+</html>
